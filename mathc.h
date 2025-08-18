@@ -21,6 +21,11 @@ the following restrictions:
 #ifndef MATHC_H
 #define MATHC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <math.h>
 #include <stdbool.h>
 
@@ -1339,5 +1344,10 @@ mfloat_t bounce_ease_out(mfloat_t f);
 mfloat_t bounce_ease_in(mfloat_t f);
 mfloat_t bounce_ease_in_out(mfloat_t f);
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
