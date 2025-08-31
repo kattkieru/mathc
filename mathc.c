@@ -3375,7 +3375,9 @@ mfloat_t* mat4_perspective(mfloat_t* result, mfloat_t fov_y, mfloat_t aspect, mf
 	result[2] = MFLOAT_C(0.0);
 	result[3] = MFLOAT_C(0.0);
 	result[4] = MFLOAT_C(0.0);
-	result[5] = MFLOAT_C(1.0) / tan_half_fov_y;
+	// Use cotangent(fov_y/2) for Y scaling.
+	// Previous code used tan(fov_y/2), which flattened geometry vertically.
+	result[5] = tan_half_fov_y;
 	result[6] = MFLOAT_C(0.0);
 	result[7] = MFLOAT_C(0.0);
 	result[8] = MFLOAT_C(0.0);
