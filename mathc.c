@@ -4446,11 +4446,13 @@ struct vec3 svec3_reflect(struct vec3 v0, struct vec3 normal)
 	return result;
 }
 
-struct vec3 svec3_rotate(struct vec3 v0, struct vec3 ra, mfloat_t f)
+struct vec3 svec3_rotate(struct vec3 v0, struct vec3 rotation_axis, mfloat_t f)
 {
 	struct vec3 result;
-	vec3_lerp((mfloat_t*)&result, (mfloat_t*)&v0, (mfloat_t*)&ra, f);
-	return result;
+	// rotation_axis is normalized in place by the function below, so take a copy
+    struct vec3 axis = rotation_axis;
+    vec3_rotate((mfloat_t*)&result, (mfloat_t*)&v0, (mfloat_t*)&axis, f);
+    return result;
 }
 
 struct vec3 svec3_lerp(struct vec3 v0, struct vec3 v1, mfloat_t f)
@@ -6032,9 +6034,9 @@ struct vec3* psvec3_reflect(struct vec3* result, struct vec3* v0, struct vec3* n
 	return (struct vec3*)vec3_reflect((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)normal);
 }
 
-struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* ra, mfloat_t f)
+struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* rotation_axis, mfloat_t f)
 {
-	return (struct vec3*)vec3_lerp((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)ra, f);
+    return (struct vec3*)vec3_rotate((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)rotation_axis, f);
 }
 
 struct vec3* psvec3_lerp(struct vec3* result, struct vec3* v0, struct vec3* v1, mfloat_t f)
