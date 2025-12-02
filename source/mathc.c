@@ -254,8 +254,8 @@ mint_t* vec2i_min(mint_t* result, mint_t* v0, mint_t* v1)
 
 mint_t* vec2i_clamp(mint_t* result, mint_t* v0, mint_t* v1, mint_t* v2)
 {
-	vec2i_min(result, v0, v1);
-	vec2i_max(result, v0, v2);
+	vec2i_max(result, v0, v1);
+	vec2i_min(result, result, v2);
 	return result;
 }
 
@@ -505,8 +505,8 @@ mint_t* vec3i_min(mint_t* result, mint_t* v0, mint_t* v1)
 
 mint_t* vec3i_clamp(mint_t* result, mint_t* v0, mint_t* v1, mint_t* v2)
 {
-	vec3i_min(result, v0, v1);
-	vec3i_max(result, v0, v2);
+	vec3i_max(result, v0, v1);
+	vec3i_min(result, result, v2);
 	return result;
 }
 
@@ -772,8 +772,8 @@ mint_t* vec4i_min(mint_t* result, mint_t* v0, mint_t* v1)
 
 mint_t* vec4i_clamp(mint_t* result, mint_t* v0, mint_t* v1, mint_t* v2)
 {
-	vec4i_min(result, v0, v1);
-	vec4i_max(result, v0, v2);
+	vec4i_max(result, v0, v1);
+	vec4i_min(result, result, v2);
 	return result;
 }
 #endif
@@ -975,8 +975,8 @@ mfloat_t* vec2_min(mfloat_t* result, mfloat_t* v0, mfloat_t* v1)
 
 mfloat_t* vec2_clamp(mfloat_t* result, mfloat_t* v0, mfloat_t* v1, mfloat_t* v2)
 {
-	vec2_min(result, v0, v1);
-	vec2_max(result, v0, v2);
+	vec2_max(result, v0, v1);
+	vec2_min(result, result, v2);
 	return result;
 }
 
@@ -1361,8 +1361,8 @@ mfloat_t* vec3_min(mfloat_t* result, mfloat_t* v0, mfloat_t* v1)
 
 mfloat_t* vec3_clamp(mfloat_t* result, mfloat_t* v0, mfloat_t* v1, mfloat_t* v2)
 {
-	vec3_min(result, v0, v1);
-	vec3_max(result, v0, v2);
+	vec3_max(result, v0, v1);
+	vec3_min(result, result, v2);
 	return result;
 }
 
@@ -1811,8 +1811,8 @@ mfloat_t* vec4_min(mfloat_t* result, mfloat_t* v0, mfloat_t* v1)
 
 mfloat_t* vec4_clamp(mfloat_t* result, mfloat_t* v0, mfloat_t* v1, mfloat_t* v2)
 {
-	vec4_min(result, v0, v1);
-	vec4_max(result, v0, v2);
+	vec4_max(result, v0, v1);
+	vec4_min(result, result, v2);
 	return result;
 }
 
@@ -2221,7 +2221,7 @@ mfloat_t* mat2_inverse(mfloat_t* result, mfloat_t* m0)
 {
 	mfloat_t inverse[MAT2_SIZE];
 	mfloat_t det = mat2_determinant(m0);
-	mat2_cofactor(inverse, m0);
+	mat2_adjugate(inverse, m0);
 	mat2_multiply_f(inverse, inverse, MFLOAT_C(1.0) / det);
 	result[0] = inverse[0];
 	result[1] = inverse[1];
@@ -2233,6 +2233,8 @@ mfloat_t* mat2_inverse(mfloat_t* result, mfloat_t* m0)
 mfloat_t* mat2_scaling(mfloat_t* result, mfloat_t* v0)
 {
 	result[0] = v0[0];
+	result[1] = MFLOAT_C(0.0);
+	result[2] = MFLOAT_C(0.0);
 	result[3] = v0[1];
 	return result;
 }
@@ -2476,43 +2478,32 @@ mfloat_t* mat3_multiply_f(mfloat_t* result, mfloat_t* m0, mfloat_t f)
 
 mfloat_t* mat3_inverse(mfloat_t* result, mfloat_t* m0)
 {
-	mfloat_t inverse[MAT3_SIZE];
-	mfloat_t inverted_determinant;
-	mfloat_t m11 = m0[0];
-	mfloat_t m21 = m0[1];
-	mfloat_t m31 = m0[2];
-	mfloat_t m12 = m0[3];
-	mfloat_t m22 = m0[4];
-	mfloat_t m32 = m0[5];
-	mfloat_t m13 = m0[6];
-	mfloat_t m23 = m0[7];
-	mfloat_t m33 = m0[8];
-	inverse[0] = m22 * m33 - m32 * m23;
-	inverse[3] = m13 * m32 - m12 * m33;
-	inverse[6] = m12 * m23 - m13 * m22;
-	inverse[1] = m23 * m31 - m21 * m33;
-	inverse[4] = m11 * m33 - m13 * m31;
-	inverse[7] = m21 * m13 - m11 * m23;
-	inverse[2] = m21 * m32 - m31 * m22;
-	inverse[5] = m31 * m12 - m11 * m32;
-	inverse[8] = m11 * m22 - m21 * m12;
-	inverted_determinant = MFLOAT_C(1.0) / (m11 * inverse[0] + m21 * inverse[3] + m31 * inverse[6]);
-	result[0] = inverse[0] * inverted_determinant;
-	result[1] = inverse[1] * inverted_determinant;
-	result[2] = inverse[2] * inverted_determinant;
-	result[3] = inverse[3] * inverted_determinant;
-	result[4] = inverse[4] * inverted_determinant;
-	result[5] = inverse[5] * inverted_determinant;
-	result[6] = inverse[6] * inverted_determinant;
-	result[7] = inverse[7] * inverted_determinant;
-	result[8] = inverse[8] * inverted_determinant;
+	mfloat_t det = m0[0] * (m0[4] * m0[8] - m0[5] * m0[7]) -
+				   m0[1] * (m0[3] * m0[8] - m0[5] * m0[6]) +
+				   m0[2] * (m0[3] * m0[7] - m0[4] * m0[6]);
+	mfloat_t inv_det = MFLOAT_C(1.0) / det;
+	result[0] = (m0[4] * m0[8] - m0[5] * m0[7]) * inv_det;
+	result[1] = (m0[2] * m0[7] - m0[1] * m0[8]) * inv_det;
+	result[2] = (m0[1] * m0[5] - m0[2] * m0[4]) * inv_det;
+	result[3] = (m0[5] * m0[6] - m0[3] * m0[8]) * inv_det;
+	result[4] = (m0[0] * m0[8] - m0[2] * m0[6]) * inv_det;
+	result[5] = (m0[2] * m0[3] - m0[0] * m0[5]) * inv_det;
+	result[6] = (m0[3] * m0[7] - m0[4] * m0[6]) * inv_det;
+	result[7] = (m0[1] * m0[6] - m0[0] * m0[7]) * inv_det;
+	result[8] = (m0[0] * m0[4] - m0[1] * m0[3]) * inv_det;
 	return result;
 }
 
 mfloat_t* mat3_scaling(mfloat_t* result, mfloat_t* v0)
 {
 	result[0] = v0[0];
+	result[1] = MFLOAT_C(0.0);
+	result[2] = MFLOAT_C(0.0);
+	result[3] = MFLOAT_C(0.0);
 	result[4] = v0[1];
+	result[5] = MFLOAT_C(0.0);
+	result[6] = MFLOAT_C(0.0);
+	result[7] = MFLOAT_C(0.0);
 	result[8] = v0[2];
 	return result;
 }
@@ -2529,8 +2520,13 @@ mfloat_t* mat3_rotation_x(mfloat_t* result, mfloat_t f)
 {
 	mfloat_t c = MCOS(f);
 	mfloat_t s = MSIN(f);
+	result[0] = MFLOAT_C(1.0);
+	result[1] = MFLOAT_C(0.0);
+	result[2] = MFLOAT_C(0.0);
+	result[3] = MFLOAT_C(0.0);
 	result[4] = c;
 	result[5] = s;
+	result[6] = MFLOAT_C(0.0);
 	result[7] = -s;
 	result[8] = c;
 	return result;
@@ -2541,8 +2537,13 @@ mfloat_t* mat3_rotation_y(mfloat_t* result, mfloat_t f)
 	mfloat_t c = MCOS(f);
 	mfloat_t s = MSIN(f);
 	result[0] = c;
+	result[1] = MFLOAT_C(0.0);
 	result[2] = -s;
+	result[3] = MFLOAT_C(0.0);
+	result[4] = MFLOAT_C(1.0);
+	result[5] = MFLOAT_C(0.0);
 	result[6] = s;
+	result[7] = MFLOAT_C(0.0);
 	result[8] = c;
 	return result;
 }
@@ -2553,8 +2554,13 @@ mfloat_t* mat3_rotation_z(mfloat_t* result, mfloat_t f)
 	mfloat_t s = MSIN(f);
 	result[0] = c;
 	result[1] = s;
+	result[2] = MFLOAT_C(0.0);
 	result[3] = -s;
 	result[4] = c;
+	result[5] = MFLOAT_C(0.0);
+	result[6] = MFLOAT_C(0.0);
+	result[7] = MFLOAT_C(0.0);
+	result[8] = MFLOAT_C(1.0);
 	return result;
 }
 
@@ -2984,10 +2990,22 @@ mfloat_t* mat4_rotation_x(mfloat_t* result, mfloat_t f)
 {
 	mfloat_t c = MCOS(f);
 	mfloat_t s = MSIN(f);
+	result[0] = MFLOAT_C(1.0);
+	result[1] = MFLOAT_C(0.0);
+	result[2] = MFLOAT_C(0.0);
+	result[3] = MFLOAT_C(0.0);
+	result[4] = MFLOAT_C(0.0);
 	result[5] = c;
 	result[6] = s;
+	result[7] = MFLOAT_C(0.0);
+	result[8] = MFLOAT_C(0.0);
 	result[9] = -s;
 	result[10] = c;
+	result[11] = MFLOAT_C(0.0);
+	result[12] = MFLOAT_C(0.0);
+	result[13] = MFLOAT_C(0.0);
+	result[14] = MFLOAT_C(0.0);
+	result[15] = MFLOAT_C(1.0);
 	return result;
 }
 
@@ -2996,9 +3014,21 @@ mfloat_t* mat4_rotation_y(mfloat_t* result, mfloat_t f)
 	mfloat_t c = MCOS(f);
 	mfloat_t s = MSIN(f);
 	result[0] = c;
+	result[1] = MFLOAT_C(0.0);
 	result[2] = -s;
+	result[3] = MFLOAT_C(0.0);
+	result[4] = MFLOAT_C(0.0);
+	result[5] = MFLOAT_C(1.0);
+	result[6] = MFLOAT_C(0.0);
+	result[7] = MFLOAT_C(0.0);
 	result[8] = s;
+	result[9] = MFLOAT_C(0.0);
 	result[10] = c;
+	result[11] = MFLOAT_C(0.0);
+	result[12] = MFLOAT_C(0.0);
+	result[13] = MFLOAT_C(0.0);
+	result[14] = MFLOAT_C(0.0);
+	result[15] = MFLOAT_C(1.0);
 	return result;
 }
 
@@ -3008,8 +3038,20 @@ mfloat_t* mat4_rotation_z(mfloat_t* result, mfloat_t f)
 	mfloat_t s = MSIN(f);
 	result[0] = c;
 	result[1] = s;
+	result[2] = MFLOAT_C(0.0);
+	result[3] = MFLOAT_C(0.0);
 	result[4] = -s;
 	result[5] = c;
+	result[6] = MFLOAT_C(0.0);
+	result[7] = MFLOAT_C(0.0);
+	result[8] = MFLOAT_C(0.0);
+	result[9] = MFLOAT_C(0.0);
+	result[10] = MFLOAT_C(1.0);
+	result[11] = MFLOAT_C(0.0);
+	result[12] = MFLOAT_C(0.0);
+	result[13] = MFLOAT_C(0.0);
+	result[14] = MFLOAT_C(0.0);
+	result[15] = MFLOAT_C(1.0);
 	return result;
 }
 
@@ -4450,9 +4492,9 @@ struct vec3 svec3_rotate(struct vec3 v0, struct vec3 rotation_axis, mfloat_t f)
 {
 	struct vec3 result;
 	// rotation_axis is normalized in place by the function below, so take a copy
-    struct vec3 axis = rotation_axis;
-    vec3_rotate((mfloat_t*)&result, (mfloat_t*)&v0, (mfloat_t*)&axis, f);
-    return result;
+	struct vec3 axis = rotation_axis;
+	vec3_rotate((mfloat_t*)&result, (mfloat_t*)&v0, (mfloat_t*)&axis, f);
+	return result;
 }
 
 struct vec3 svec3_lerp(struct vec3 v0, struct vec3 v1, mfloat_t f)
@@ -6034,9 +6076,10 @@ struct vec3* psvec3_reflect(struct vec3* result, struct vec3* v0, struct vec3* n
 	return (struct vec3*)vec3_reflect((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)normal);
 }
 
-struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* rotation_axis, mfloat_t f)
+struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* rotation_axis,
+						   mfloat_t f)
 {
-    return (struct vec3*)vec3_rotate((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)rotation_axis, f);
+	return (struct vec3*)vec3_rotate((mfloat_t*)result, (mfloat_t*)v0, (mfloat_t*)rotation_axis, f);
 }
 
 struct vec3* psvec3_lerp(struct vec3* result, struct vec3* v0, struct vec3* v1, mfloat_t f)
@@ -6794,8 +6837,12 @@ mfloat_t circular_ease_in_out(mfloat_t f)
 
 mfloat_t exponential_ease_out(mfloat_t f)
 {
-	mfloat_t a = f;
-	if (MFABS(a) > MFLT_EPSILON) {
+	mfloat_t a;
+	if (MFABS(f) < MFLT_EPSILON) {
+		a = MFLOAT_C(0.0);
+	} else if (MFABS(f - MFLOAT_C(1.0)) < MFLT_EPSILON) {
+		a = MFLOAT_C(1.0);
+	} else {
 		a = MFLOAT_C(1.0) - MPOW(MFLOAT_C(2.0), -MFLOAT_C(10.0) * f);
 	}
 	return a;
@@ -6812,8 +6859,12 @@ mfloat_t exponential_ease_in(mfloat_t f)
 
 mfloat_t exponential_ease_in_out(mfloat_t f)
 {
-	mfloat_t a = f;
-	if (f < MFLOAT_C(0.5)) {
+	mfloat_t a;
+	if (MFABS(f) < MFLT_EPSILON) {
+		a = MFLOAT_C(0.0);
+	} else if (MFABS(f - MFLOAT_C(1.0)) < MFLT_EPSILON) {
+		a = MFLOAT_C(1.0);
+	} else if (f < MFLOAT_C(0.5)) {
 		a = MFLOAT_C(0.5) * MPOW(MFLOAT_C(2.0), (MFLOAT_C(20.0) * f) - MFLOAT_C(10.0));
 	} else {
 		a = -MFLOAT_C(0.5) * MPOW(MFLOAT_C(2.0), -MFLOAT_C(20.0) * f + MFLOAT_C(10.0)) +

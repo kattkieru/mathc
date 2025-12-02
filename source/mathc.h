@@ -1174,7 +1174,8 @@ mfloat_t psvec3_dot(struct vec3* v0, struct vec3* v1);
 struct vec3* psvec3_project(struct vec3* result, struct vec3* v0, struct vec3* v1);
 struct vec3* psvec3_slide(struct vec3* result, struct vec3* v0, struct vec3* normal);
 struct vec3* psvec3_reflect(struct vec3* result, struct vec3* v0, struct vec3* normal);
-struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* rotation_axis, mfloat_t f);
+struct vec3* psvec3_rotate(struct vec3* result, struct vec3* v0, struct vec3* rotation_axis,
+						   mfloat_t f);
 struct vec3* psvec3_lerp(struct vec3* result, struct vec3* v0, struct vec3* v1, mfloat_t f);
 struct vec3* psvec3_bezier3(struct vec3* result, struct vec3* v0, struct vec3* v1, struct vec3* v2,
 							mfloat_t f);
