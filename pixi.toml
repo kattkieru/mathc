@@ -1,0 +1,19 @@
+[workspace]
+authors = ["kiki <charles@skeletalstudios.com>"]
+channels = ["conda-forge"]
+name = "mathc-test"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+configure = { cmd="cmake -B _build -S . -G Ninja -DCMAKE_INSTALL_PREFIX=_install" }
+build = { cmd="cmake --build _build --config release --target install", depends-on=["configure"] }
+test = { cmd="ctest --test-dir _build --verbose --output-on-failure", depends-on=["build"] }
+clean = "rm -rf _*"
+format = { cmd="python tools/format.py" }
+
+[dependencies]
+cmake = "==3.30"
+ninja = ">=1.13.2,<2"
+python = "==3.12.1"
+clang-format = ">=20.1.8,<21"
