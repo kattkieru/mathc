@@ -266,7 +266,6 @@ MU_TEST(test_mat3_multiply_inverse_is_identity)
 	mu_assert(float_eq(1.0f, result[8]), "M*M^-1 = I [2,2]");
 }
 
-
 MU_TEST_SUITE(test_suite)
 {
 	// Pointer-based API tests
