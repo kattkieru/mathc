@@ -63,6 +63,35 @@ mfloat_t clampf(mfloat_t value, mfloat_t min, mfloat_t max)
 	}
 	return value;
 }
+
+mfloat_t signf(mfloat_t x)
+{
+	if (x > MFLOAT_C(0.0)) {
+		return MFLOAT_C(1.0);
+	} else if (x < MFLOAT_C(0.0)) {
+		return MFLOAT_C(-1.0);
+	}
+	return MFLOAT_C(0.0);
+}
+
+mfloat_t lerp(mfloat_t a, mfloat_t b, mfloat_t t)
+{
+	return a + (b - a) * t;
+}
+
+mfloat_t inverse_lerp(mfloat_t a, mfloat_t b, mfloat_t value)
+{
+	if (MFABS(b - a) < MFLT_EPSILON) {
+		return MFLOAT_C(0.0);
+	}
+	return (value - a) / (b - a);
+}
+
+mfloat_t remap(mfloat_t value, mfloat_t in_min, mfloat_t in_max, mfloat_t out_min, mfloat_t out_max)
+{
+	mfloat_t t = inverse_lerp(in_min, in_max, value);
+	return lerp(out_min, out_max, t);
+}
 #endif
 
 #if defined(MATHC_USE_INT)

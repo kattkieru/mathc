@@ -433,6 +433,11 @@ MATHC_API bool nearly_equal(mfloat_t a, mfloat_t b, mfloat_t epsilon);
 MATHC_API mfloat_t to_radians(mfloat_t degrees);
 MATHC_API mfloat_t to_degrees(mfloat_t radians);
 MATHC_API mfloat_t clampf(mfloat_t value, mfloat_t min, mfloat_t max);
+MATHC_API mfloat_t signf(mfloat_t x);
+MATHC_API mfloat_t lerp(mfloat_t a, mfloat_t b, mfloat_t t);
+MATHC_API mfloat_t inverse_lerp(mfloat_t a, mfloat_t b, mfloat_t value);
+MATHC_API mfloat_t remap(mfloat_t value, mfloat_t in_min, mfloat_t in_max, mfloat_t out_min,
+						 mfloat_t out_max);
 #endif
 
 #if defined(MATHC_USE_INT)
